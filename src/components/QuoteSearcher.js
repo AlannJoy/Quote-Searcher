@@ -2,34 +2,47 @@ import React, { Component } from "react";
 
 export default class QuoteSearcher extends Component {
   state = {
-    quotes: [
-      {
-        _id: "5d91b45d9980192a317c8acc",
-        quoteText:
-          "Notice that the stiffest tree is most easily cracked, while the bamboo or willow survives by bending with the wind.",
-        quoteAuthor: "Bruce Lee"
-      },
-      {
-        _id: "5d91b45d9980192a317c8abe",
-        quoteText:
-          "Give me six hours to chop down a tree and I will spend the first four sharpening the axe.",
-        quoteAuthor: "Abraham Lincoln"
-      },
-      {
-        _id: "5d91b45d9980192a317c8955",
-        quoteText:
-          "Good timber does not grow with ease; the stronger the wind, the stronger the trees.",
-        quoteAuthor: "J. Willard Marriott"
-      }
-    ]
+    loading: true,
+    quotes: []
   };
+
+  async componentDidMount() {
+    const url = "https://quote-garden.herokuapp.com/quotes/search/tree";
+    const response = await fetch(url);
+    const data = await response.json();
+    this.setState({
+      quotes: data.results,
+      loading: false
+    });
+    // console.log(data.results[2]);
+  }
 
   render() {
     const quotes = this.state.quotes;
     console.log(quotes);
     return (
       <div>
-        <p>
+        <div>
+          {this.state.loading || !this.state.quotes ? (
+            <div>Loading..</div>
+          ) : (
+            <div>
+              <h1>Quotes</h1>
+            </div>
+          )}
+        </div>
+        <div>
+          {this.state.quotes.map(quotes => (
+            <div>
+              <div>
+                <strong>{quotes.quoteText}</strong>
+              </div>
+              <div>By: {quotes.quoteAuthor}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* <p>
           {this.state.quotes.map(quote => (
             <div>
               <ul>{quote.quoteText}</ul>
@@ -37,7 +50,7 @@ export default class QuoteSearcher extends Component {
               {quote.quoteAuthor}
             </div>
           ))}
-        </p>
+        </p> */}
       </div>
     );
   }
