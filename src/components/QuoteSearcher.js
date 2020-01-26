@@ -1,27 +1,40 @@
 import React, { Component } from "react";
+import Quote from "./Quote";
 
 export default class QuoteSearcher extends Component {
   state = {
-    loading: true,
+    loading: false,
     quotes: []
+  };
+
+  incrementLike = id => {
+    const quotelist = this.state.quotes;
+    const updateQuote = quotelist.map(q =>
+      q.id === id ? { ...q, likes: q.likes + 1 } : q
+    );
+    this.setState({ quotes: updateQuote });
   };
 
   async componentDidMount() {
     const url = "https://quote-garden.herokuapp.com/quotes/search/tree";
     const response = await fetch(url);
     const data = await response.json();
-    this.setState({
-      quotes: data.results,
-      loading: false
+    const dataUpDated = data.results.map(q => {
+      return {
+        ...q,
+        likes: 0,
+        dislikes: 0
+      };
     });
-    // console.log(data.results[2]);
+
+    console.log(dataUpDated);
+
+    this.setState({ quotes: dataUpDated });
   }
 
   render() {
-    const quotes = this.state.quotes;
-    console.log(quotes);
     return (
-      <div>
+      <div className="quote-searcher">
         <div>
           {this.state.loading || !this.state.quotes ? (
             <div>Loading..</div>
@@ -32,25 +45,18 @@ export default class QuoteSearcher extends Component {
           )}
         </div>
         <div>
-          {this.state.quotes.map(quotes => (
+          {this.state.quotes.map((quotes, index) => (
             <div>
-              <div>
-                <strong>{quotes.quoteText}</strong>
-              </div>
-              <div>By: {quotes.quoteAuthor}</div>
+              <Quote
+                id={quotes.id}
+                quoteText={quotes.quoteText}
+                quoteAuthor={quotes.quoteAuthor}
+                key={index}
+                incrementLike={this.incrementLike}
+              />
             </div>
           ))}
         </div>
-
-        {/* <p>
-          {this.state.quotes.map(quote => (
-            <div>
-              <ul>{quote.quoteText}</ul>
-              {"By: "}
-              {quote.quoteAuthor}
-            </div>
-          ))}
-        </p> */}
       </div>
     );
   }
