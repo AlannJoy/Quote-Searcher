@@ -7,12 +7,19 @@ export default class QuoteSearcher extends Component {
     quotes: []
   };
 
-  incrementLike = id => {
-    const quotelist = this.state.quotes;
-    const updateQuote = quotelist.map(q =>
-      q.id === id ? { ...q, likes: q.likes + 1 } : q
-    );
-    this.setState({ quotes: updateQuote });
+  increment = index => {
+    // console.log(this.state.quotes.map(q => q.likes))
+    // console.log("increment!!!", index);
+    const quotes = [...this.state.quotes];
+    quotes[index].likes++;
+    this.setState({ quotes: quotes });
+  };
+
+  decrement = index => {
+    // console.log("decrement!!!", index);
+    const quotes = [...this.state.quotes];
+    quotes[index].dislikes++;
+    this.setState({ quotes: quotes });
   };
 
   async componentDidMount() {
@@ -46,15 +53,17 @@ export default class QuoteSearcher extends Component {
         </div>
         <div>
           {this.state.quotes.map((quotes, index) => (
-            <div>
-              <Quote
-                id={quotes.id}
-                quoteText={quotes.quoteText}
-                quoteAuthor={quotes.quoteAuthor}
-                key={index}
-                incrementLike={this.incrementLike}
-              />
-            </div>
+            <Quote
+              key={index}
+              id={quotes.id}
+              index={index}
+              quoteText={quotes.quoteText}
+              quoteAuthor={quotes.quoteAuthor}
+              likes={quotes.likes}
+              dislikes={quotes.dislikes}
+              increment={this.increment}
+              decrement={this.decrement}
+            />
           ))}
         </div>
       </div>
